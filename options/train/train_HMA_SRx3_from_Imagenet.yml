@@ -1,0 +1,120 @@
+# general settings
+name: train_HMA_SRx3_from_imagenet_800k
+model_type: HMAModel
+scale: 3
+num_gpu: auto
+manual_seed: 1234
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: ImageNet
+      type: PairedImageNetDataset
+      dataroot_gt: ./datasets/imagenet/imagenet
+      meta_info_file: ./datasets/imagenet/imagenet.txt
+    io_backend:
+      type: disk
+
+    gt_size: 192
+    use_hflip: true
+    use_rot: true
+
+    # data loader
+    use_shuffle: true
+    num_worker_per_gpu: 8
+    batch_size_per_gpu: 4
+    dataset_enlarge_ratio: 1
+    prefetch_mode: ~
+
+  val_1:
+    name: Set5
+    type: PairedImageDataset
+    dataroot_gt: ./datasets\set5\GTmod3
+    dataroot_lq: ./datasets\LRbicx3
+    io_backend:
+      type: disk
+
+#  val_2:
+#    name: Set14
+#    type: PairedImageDataset
+#    dataroot_gt: ./datasets/Set14/GTmod3
+#    dataroot_lq: ./datasets/Set14/LRbicx3
+#    io_backend:
+#      type: disk
+
+# network structures
+network_g:
+  type: HMANet
+  upscale: 3
+  in_chans: 3
+  img_size: 64
+  window_size: 16
+  interval_size: 4
+  img_range: 1.
+  depths: [6, 6, 6, 6, 6, 6]
+  embed_dim: 180
+  num_heads: [6, 6, 6, 6, 6, 6]
+  mlp_ratio: 2
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+
+# path
+path:
+  pretrain_network_g: ~
+  strict_load_g: true
+  resume_state: ~
+
+# training settings
+train:
+  ema_decay: 0.999
+  optim_g:
+    type: Adam
+    lr: !!float 2e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [300000, 500000, 650000, 700000, 750000]
+    gamma: 0.5
+
+  total_iter: 800000
+  warmup_iter: -1  # no warm up
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: 1.0
+    reduction: mean
+
+# validation settings
+val:
+  val_freq: !!float 1e3
+  save_img: false
+  pbar: False
+
+  metrics:
+    psnr:
+      type: calculate_psnr
+      crop_border: 3
+      test_y_channel: true
+      better: higher  # the higher, the better. Default: higher
+    ssim:
+      type: calculate_ssim
+      crop_border: 3
+      test_y_channel: true
+      better: higher  # the higher, the better. Default: higher
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 5e3
+  use_tb_logger: true
+  wandb:
+    project: ~
+    resume_id: ~
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29500

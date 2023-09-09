@@ -1,0 +1,87 @@
+# general settings
+name: HMA_test_X4
+model_type: HMAModel
+scale: 4
+num_gpu: auto
+manual_seed: 1234
+
+# dataset and data loader settings
+datasets:
+  test_1:
+    name: Set5
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/Set5/GTmod4
+    dataroot_lq: ./datasets/Set5/LRbicx4
+    io_backend:
+      type: disk
+  test_2:
+    name: Set14
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/Set14/GTmod4
+    dataroot_lq: ./datasets/Set14/LRbicx4
+    io_backend:
+      type: disk
+  test_3:
+    name: BSD100
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/B100/GTmod4
+    dataroot_lq: ./datasets/B100/LRbicx4
+    io_backend:
+      type: disk
+  test_4:
+    name: Urban100
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/Urban100/GTmod4
+    dataroot_lq: ./datasets/Urban100/LRbicx4
+    io_backend:
+      type: disk
+  test_5:
+    name: MANGA109
+    type: PairedImageDataset
+    dataroot_gt: ./datasets/MANGA109/GTmod4
+    dataroot_lq: ./datasets/MANGA109/LRbicx4
+    io_backend:
+      type: disk
+
+
+# network structures
+network_g:
+  type: HMANet
+  upscale: 4
+  in_chans: 3
+  img_size: 64
+  window_size: 16
+  interval_size: 4
+  img_range: 1.
+  depths: [6, 6, 6, 6, 6, 6]
+  embed_dim: 180
+  num_heads: [6, 6, 6, 6, 6, 6]
+  mlp_ratio: 2
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+
+# path
+path:
+  pretrain_network_g: ./experiments/pretrained_models/HMA_SRx4_pretrain.pth
+  strict_load_g: true
+  param_key_g: 'params_ema'
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true
+
+# tile settings
+tile:
+  tile_size: 256
+  tile_pad: 32
