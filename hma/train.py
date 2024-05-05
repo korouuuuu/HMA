@@ -1,8 +1,8 @@
 # flake8: noqa
 import os.path as osp
-import hat.archs
-import hat.data
-import hat.models
+import hma.archs
+import hma.data
+import hma.models
 from basicsr.train import train_pipeline
 
 
