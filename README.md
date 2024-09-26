@@ -2,7 +2,7 @@
 
 ## Updates
 - ✅ 2023-09-09: Release the codes and results of HMA.
-- **(To do)** Release the pretrain models.
+- ✅ 2024-09-26: Release the pre-train models of HMA.
 
 ## Overview
 <img src="https://github.com/korouuuuu/HMA/blob/main/figs/Comparison.png" width="600"/>
@@ -28,6 +28,15 @@ Then,
 pip install -r requirements.txt
 python setup.py develop
 ```
+## How To Test
+- Refer to `./options/test` for the configuration file of the model to be tested, and prepare the testing data and pretrained model.  
+- The pretrained models are available at
+[Google Drive](https://drive.google.com/drive/folders/13Bxt_BXtWgwwcO7tjfoL6zYZAUY1v3zi?usp=sharing).  
+- Then run the following codes (taking `HMA_SRx2_pretrain.pth` as an example):
+```
+python hma/test.py -opt options/test/HMA_SRx2.yml
+```
+The testing results will be saved in the `./results` folder.  
 
 ## How To Train
 - Refer to `./options/train` for the configuration file of the model to train.
@@ -42,6 +51,19 @@ The training logs and weights will be saved in the `./experiments` folder.
 ## Results
 The inference results on benchmark datasets are available at
 [Google Drive](https://drive.google.com/drive/folders/1W30mc0CeNOc_mGUWp9XuKJrQSF4WD7zW?usp=drive_link).
+
+## Citations
+#### BibTeX
+
+    @InProceedings{Chu_2024_CVPR,
+    author    = {Chu, Shu-Chuan and Dou, Zhi-Chao and Pan, Jeng-Shyang and Weng, Shaowei and Li, Junbao},
+    title     = {HMANet: Hybrid Multi-Axis Aggregation Network for Image Super-Resolution},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+    month     = {June},
+    year      = {2024},
+    pages     = {6257-6266}
+    }
+
 
 
 ## Contact
